@@ -4,7 +4,7 @@ use Mix.Config
 config :vocial, Vocial.Repo,
   username: "postgres",
   password: "postgres",
-  database: "vocial_test",
+  database: "vocial_test_new",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
