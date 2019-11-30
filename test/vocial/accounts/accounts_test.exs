@@ -61,5 +61,16 @@ defmodule Vocial.AccountsTest do
     test "get_user_by_username/1 failed" do
       assert is_nil(Accounts.get_user_by_username("fail"))
     end
+
+    test "unique user " do
+      _user1 = user_fixture()
+      {:error, user2} = user_fixture()
+      assert !user2.valid?
+    end
+
+    test "email format" do
+      {:error, user} = user_fixture(%{email: "testttestcom"})
+      assert !user.valid?
+    end
   end
 end

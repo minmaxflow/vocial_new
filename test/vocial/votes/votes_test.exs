@@ -3,6 +3,18 @@ defmodule Vocial.VotesTest do
 
   alias Vocial.Votes
 
+  setup do
+    {:ok, user} =
+      Vocial.Accounts.create_user(%{
+        username: "test",
+        email: "test@test.com",
+        password: "test",
+        password_confirmation: "test"
+      })
+
+    {:ok, user: user}
+  end
+
   describe "polls" do
     @valid_attrs %{title: "Hello"}
 
@@ -14,8 +26,8 @@ defmodule Vocial.VotesTest do
       end
     end
 
-    test "list_polls/0 returns all polls" do
-      poll = poll_fixture()
+    test "list_polls/0 returns all polls", %{user: user} do
+      poll = poll_fixture(%{user_id: user.id})
       assert Votes.list_polls() == [poll]
     end
 
@@ -24,15 +36,17 @@ defmodule Vocial.VotesTest do
       assert changeset.__struct__ == Ecto.Changeset
     end
 
-    test "create_poll/2 returns a new poll" do
-      {:ok, poll} = Votes.create_poll(@valid_attrs)
+    test "create_poll/2 returns a new poll", %{user: user} do
+      {:ok, poll} = Votes.create_poll(Map.put(@valid_attrs, :user_id, user.id))
       assert Enum.any?(Votes.list_polls(), fn p -> p.id == poll.id end)
     end
 
-    test "create_poll_with_options/2 returns a new poll with options" do
+    test "create_poll_with_options/2 returns a new poll with options", %{user: user} do
       title = "Poll with Options"
       options = ["a", "b", "c"]
-      {:ok, poll} = Votes.create_poll_with_options(%{title: title}, options)
+
+      {:ok, poll} = Votes.create_poll_with_options(%{title: title, user_id: user.id}, options)
+
       assert poll.title == title
       assert Enum.count(poll.options) == 3
     end
@@ -44,8 +58,8 @@ defmodule Vocial.VotesTest do
   end
 
   describe "options" do
-    test "create_option/1" do
-      with {:ok, poll} = Votes.create_poll(%{title: "Sample Poll"}),
+    test "create_option/1", %{user: user} do
+      with {:ok, poll} = Votes.create_poll(%{title: "Sample Poll", user_id: user.id}),
            {:ok, option} = Votes.create_option(%{title: "Sample Choice", poll_id: poll.id}),
            option <- Repo.preload(option, :poll) do
         assert Votes.list_options() === [option]

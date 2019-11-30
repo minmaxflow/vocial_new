@@ -2,6 +2,7 @@ defmodule Vocial.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Vocial.Accounts.User
+  alias Vocial.Votes.Poll
 
   schema "users" do
     field :username, :string
@@ -12,6 +13,8 @@ defmodule Vocial.Accounts.User do
     field :password, :string, virtual: true
     field :password_confirmation, :string, virtual: true
 
+    has_many :polls, Poll
+
     timestamps()
   end
 
@@ -20,6 +23,8 @@ defmodule Vocial.Accounts.User do
     |> cast(attrs, [:username, :email, :active, :password, :password_confirmation])
     |> validate_confirmation(:password, message: "does not match password!")
     |> encrpyt_password()
+    |> unique_constraint(:username)
+    |> validate_format(:email, ~r/@/)
     |> validate_required([:username, :email, :active, :encrypted_password])
   end
 
