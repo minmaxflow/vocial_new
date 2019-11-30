@@ -17,9 +17,13 @@ defmodule VocialWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/polls", PollController, :index
-    get "/polls/new", PollController, :new
-    post "/polls", PollController, :create
+
+    resources "/polls", PollController, [:index, :new, :create]
+    resources "/users", UserController, [:new, :create, :show]
+
+    get "/login", SessionController, :new
+    post "/sessions", SessionController, :create
+    delete "/logout", SessionController, :delete
   end
 
   # Other scopes may use custom stacks.

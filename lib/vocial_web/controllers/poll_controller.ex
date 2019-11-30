@@ -17,7 +17,7 @@ defmodule VocialWeb.PollController do
   def create(conn, %{"poll" => poll_params, "options" => options}) do
     split_optiosn = String.split(options, ",")
 
-    with {:ok, poll} <- Votes.create_poll_with_options(poll_params, split_optiosn) do
+    with {:ok, _} <- Votes.create_poll_with_options(poll_params, split_optiosn) do
       conn
       |> put_flash(:info, "Poll created successfully!")
       |> redirect(to: Routes.poll_path(conn, :index))
