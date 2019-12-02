@@ -1,4 +1,7 @@
-<%= render("_poll.html", %{poll: @poll}) %>
+<%= render("_poll.html", %{poll: @poll, conn: @conn}) %>
 
 <i id="enable-polls-channel" data-poll-id="<%= @poll.id %>"></i>
 <button id="polls-ping" class="btn btn-primary">Ping Websocket</button>
+
+<%# If you don't specify a view module for a template in a render call, it is assumed that the view module is whatever the current view module is. %>
+<%= render(VocialWeb.SharedView, "_chat.html", messages: @poll.messages, chatroom: @poll.id) %> 

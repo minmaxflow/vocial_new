@@ -21,7 +21,7 @@ defmodule Vocial.VotesTest do
     def poll_fixture(attrs \\ %{}) do
       with create_attrs <- Enum.into(attrs, @valid_attrs),
            {:ok, poll} <- Votes.create_poll(create_attrs),
-           poll <- Repo.preload(poll, [:options, :image, :vote_records]) do
+           poll <- Repo.preload(poll, [:options, :image, :vote_records, :messages]) do
         poll
       end
     end
@@ -79,6 +79,42 @@ defmodule Vocial.VotesTest do
         {:ok, updated_option} = Votes.vote_on_option(option.id, "127.0.0.1")
         assert votes_before + 1 == updated_option.votes
       end
+    end
+  end
+
+  describe "messages" do
+    setup %{user: user} do
+      {:ok, poll} = Votes.create_poll(%{title: "Sample Poll", user_id: user.id})
+      poll_messages = ["Hello", "there", "World"]
+      lobby_messages = ["Polls", "are", "neat"]
+
+      Enum.each(poll_messages, fn m ->
+        Votes.create_message(%{message: m, author: "Someone", poll_id: poll.id})
+      end)
+
+      Enum.each(lobby_messages, fn m ->
+        Votes.create_message(%{message: m, author: "Someone"})
+      end)
+
+      {:ok, poll: poll}
+    end
+
+    test "create_message/1" do
+      with {:ok, message} <- Votes.create_message(%{message: "Hello", author: "Someone"}) do
+        assert Enum.any?(Votes.list_lobby_messages(), fn msg -> msg.id == message.id end)
+      end
+    end
+
+    test "list_lobby_messages/0" do
+      lobby_messages = Votes.list_lobby_messages()
+      assert Enum.count(lobby_messages) > 0
+      assert Enum.all?(lobby_messages, fn msg -> is_nil(msg.poll_id) end)
+    end
+
+    test "list_poll_messages/1", %{poll: poll} do
+      poll_messages = Votes.list_poll_messages(poll.id)
+      assert Enum.count(poll_messages) > 0
+      assert Enum.all?(poll_messages, fn msg -> msg.poll_id == poll.id end)
     end
   end
 end

@@ -1,0 +1,7 @@
+<header class="header">
+  <h4>Vocial</h4>
+  <ul>
+    <li><a href="/polls">Polls</a></li>
+    <li><a href="/login">Login</a></li>
+  </ul>
+</header>
