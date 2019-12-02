@@ -23,7 +23,7 @@ defmodule VocialWeb.PollChannelTest do
 
     {:ok, _reply, socket} =
       socket(VocialWeb.UserSocket, "user_id", %{user_id: user.id})
-      |> subscribe_and_join(PollChannel, "polls:#{poll.id}")
+      |> subscribe_and_join(PollChannel, "polls:#{poll.id}", %{"remote_ip" => "127.0.0.1"})
 
     {:ok, user: user, poll: poll, socket: socket}
   end

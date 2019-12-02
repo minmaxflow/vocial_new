@@ -1,7 +1,7 @@
 defmodule Vocial.Votes.Poll do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Vocial.Votes.{Option, Poll}
+  alias Vocial.Votes.{Option, Poll, Image, VoteRecord}
   alias Vocial.Accounts.User
 
   schema "polls" do
@@ -11,6 +11,9 @@ defmodule Vocial.Votes.Poll do
     # 比如现在默认就是在Option表上有一个poll_id的外键
     # 可以通过 :foreign_key 来定制
     has_many :options, Option
+    has_one :image, Image
+    has_many :vote_records, VoteRecord
+
     belongs_to :user, User
 
     timestamps()

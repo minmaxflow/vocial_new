@@ -16,12 +16,12 @@ defmodule VocialWeb.PollController do
     render(conn, "new.html", poll: poll)
   end
 
-  def create(conn, %{"poll" => poll_params, "options" => options}) do
+  def create(conn, %{"poll" => poll_params, "options" => options, "image_data" => image_data}) do
     split_optiosn = String.split(options, ",")
 
     with user <- get_session(conn, :user),
          poll_params <- Map.put(poll_params, "user_id", user.id),
-         {:ok, _} <- Votes.create_poll_with_options(poll_params, split_optiosn) do
+         {:ok, _} <- Votes.create_poll_with_options(poll_params, split_optiosn, image_data) do
       conn
       |> put_flash(:info, "Poll created successfully!")
       |> redirect(to: Routes.poll_path(conn, :index))
@@ -33,11 +33,25 @@ defmodule VocialWeb.PollController do
     end
   end
 
+  def create(conn, %{"poll" => _poll_params, "options" => _options} = params) do
+    create(conn, Map.put(params, "image_data", nil))
+  end
+
   def vote(conn, %{"id" => id}) do
-    with {:ok, option} <- Votes.vote_on_option(id) do
+    voter_ip =
+      conn.remote_ip
+      |> Tuple.to_list()
+      |> Enum.join(".")
+
+    with {:ok, option} <- Votes.vote_on_option(id, voter_ip) do
       conn
       |> put_flash(:info, "Placed a vote for #{option.title}!")
       |> redirect(to: Routes.poll_path(conn, :index))
+    else
+      _ ->
+        conn
+        |> put_flash(:error, "Could not place")
+        |> redirect(to: Routes.poll_path(conn, :index))
     end
   end
 

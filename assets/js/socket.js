@@ -26,7 +26,11 @@ const onJoin = (res, channel) => {
 const enableSocket = document.getElementById('enable-polls-channel');
 if (enableSocket) {
   const pollId = enableSocket.getAttribute('data-poll-id');
-  let channel = socket.channel('polls:' + pollId, {});
+  const remoteIp = document
+    .getElementsByName('remote_ip')[0]
+    .getAttribute('content');
+
+  let channel = socket.channel('polls:' + pollId, { remote_ip: remoteIp });
   channel
     .join()
     .receive('ok', res => onJoin(res, channel))
