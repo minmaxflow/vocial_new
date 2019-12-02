@@ -31,6 +31,11 @@ defmodule Vocial.VotesTest do
       assert Votes.list_polls() == [poll]
     end
 
+    test "get_poll/1", %{user: user} do
+      poll = poll_fixture(%{user_id: user.id})
+      assert Votes.get_poll(poll.id) == poll
+    end
+
     test "new_poll/0 return a new blank changeset" do
       changeset = Votes.new_poll()
       assert changeset.__struct__ == Ecto.Changeset
@@ -63,6 +68,16 @@ defmodule Vocial.VotesTest do
            {:ok, option} = Votes.create_option(%{title: "Sample Choice", poll_id: poll.id}),
            option <- Repo.preload(option, :poll) do
         assert Votes.list_options() === [option]
+      end
+    end
+
+    test "vote_on_option/1", %{user: user} do
+      with {:ok, poll} = Votes.create_poll(%{title: "Sample Poll", user_id: user.id}),
+           {:ok, option} =
+             Votes.create_option(%{title: "Sample choice", votes: 0, poll_id: poll.id}) do
+        votes_before = option.votes
+        {:ok, updated_option} = Votes.vote_on_option(option.id)
+        assert votes_before + 1 == updated_option.votes
       end
     end
   end

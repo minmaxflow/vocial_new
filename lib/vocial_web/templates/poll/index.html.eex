@@ -1,8 +1,3 @@
-<%= for poll <- @polls do %>
-  <h2>Poll: <%= poll.title %></h2>
-
-  <%= for option <- poll.options do %>
-    <strong><%= option.title %></strong>: <%= option.votes %> votes
-    <br />
-  <% end %>
+<%= for poll <- @polls do  %>
+  <%= render("_poll.html", %{poll: poll}) %>
 <% end %>

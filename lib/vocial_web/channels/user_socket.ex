@@ -2,7 +2,7 @@ defmodule VocialWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", VocialWeb.RoomChannel
+  channel "polls:*", VocialWeb.PollChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
