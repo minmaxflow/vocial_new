@@ -1,3 +1,4 @@
 <h2> User Signup </h2>
 <hr>
+<%= link "Login in with Github", to: "/auth/github" %>
 <%= render("form.html", %{user: @user, conn: @conn}) %>

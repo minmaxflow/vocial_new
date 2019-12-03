@@ -44,7 +44,10 @@ defmodule Vocial.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:comeonin, "~> 4.0.3"},
-      {:bcrypt_elixir, "~> 1.0.4"}
+      {:bcrypt_elixir, "~> 1.0.4"},
+      {:ueberauth, "~> 0.4"},
+      {:ueberauth_github, "~> 0.8"},
+      {:oauth, github: "tim/erlang-oauth"}
     ]
   end
 
