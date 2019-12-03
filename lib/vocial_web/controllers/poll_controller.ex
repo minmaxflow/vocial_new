@@ -5,10 +5,11 @@ defmodule VocialWeb.PollController do
 
   alias Vocial.Votes
 
-  def index(conn, _params) do
-    polls = Votes.list_polls()
-
-    render(conn, "index.html", polls: polls)
+  def index(conn, params) do
+    %{"page" => page, "per_page" => per_page} = normalize_paging_paams(params)
+    polls = Votes.list_most_recent_polls_with_extra(page, per_page)
+    opts = paging_options(polls, page, per_page)
+    render(conn, "index.html", polls: Enum.take(polls, per_page), opts: opts)
   end
 
   def new(conn, _params) do
@@ -59,5 +60,39 @@ defmodule VocialWeb.PollController do
     with poll <- Votes.get_poll(id) do
       render(conn, "show.html", poll: poll)
     end
+  end
+
+  defp paging_params(%{"page" => page, "per_page" => per_page}) do
+    page =
+      case is_binary(page) do
+        true -> String.to_integer(page)
+        _ -> page
+      end
+
+    per_page =
+      case is_binary(per_page) do
+        true -> String.to_integer(per_page)
+        _ -> per_page
+      end
+
+    # 用户看到是是基于1开始的页码
+    # 后台基于0
+    %{"page" => page - 1, "per_page" => per_page}
+  end
+
+  defp normalize_paging_paams(params) do
+    %{"page" => 1, "per_page" => 25}
+    |> Map.merge(params)
+    |> paging_params()
+  end
+
+  defp paging_options(polls, page, per_page) do
+    %{
+      include_next_page: Enum.count(polls) > per_page,
+      include_prev_page: page > 0,
+      # 用户看到的基于1
+      page: page + 1,
+      per_page: per_page
+    }
   end
 end
