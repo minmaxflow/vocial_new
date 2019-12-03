@@ -12,6 +12,7 @@ defmodule Vocial.Accounts.User do
     field :active, :boolean, default: true
     field :oauth_provider, :string
     field :oauth_id, :string
+    field :api_key, :string
 
     field :password, :string, virtual: true
     field :password_confirmation, :string, virtual: true
@@ -31,7 +32,8 @@ defmodule Vocial.Accounts.User do
       :password,
       :password_confirmation,
       :oauth_provider,
-      :oauth_id
+      :oauth_id,
+      :api_key
     ])
     |> validate_confirmation(:password, message: "does not match password!")
     |> encrpyt_password()

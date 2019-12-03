@@ -11,6 +11,7 @@ defmodule VocialWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug VocialWeb.VerifyApiKey
   end
 
   scope "/", VocialWeb do
@@ -22,6 +23,7 @@ defmodule VocialWeb.Router do
     get "/options/:id/vote", PollController, :vote
 
     resources "/users", UserController, [:new, :create, :show]
+    post "/users/:id/generate_api_key", UserController, :generate_api_key
 
     get "/login", SessionController, :new
     post "/sessions", SessionController, :create
@@ -35,8 +37,9 @@ defmodule VocialWeb.Router do
     get "/:provider/callback", SessionController, :callback
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", VocialWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", VocialWeb.Api do
+    pipe_through :api
+
+    resources "/polls", PollController, only: [:index, :show]
+  end
 end

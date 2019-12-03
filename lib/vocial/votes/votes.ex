@@ -34,7 +34,7 @@ defmodule Vocial.Votes do
   end
 
   def get_poll(id) do
-    Repo.get!(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
+    Repo.get(Poll, id) |> Repo.preload([:options, :image, :vote_records, :messages])
   end
 
   def new_poll do

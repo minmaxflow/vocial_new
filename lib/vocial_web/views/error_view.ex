@@ -13,4 +13,16 @@ defmodule VocialWeb.ErrorView do
   def template_not_found(template, _assigns) do
     Phoenix.Controller.status_message_from_template(template)
   end
+
+  def render("invalid_api_key.json", _assigns) do
+    %{message: "Invalid API Key"}
+  end
+
+  def render("404.json", _assigns) do
+    %{message: "Resou8rce not found"}
+  end
+
+  def render("500.json", _assigns) do
+    %{message: "An unhandled exception has occurred"}
+  end
 end
